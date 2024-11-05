@@ -1,0 +1,15 @@
+# Django framework
+django>=4.0
+
+# Django REST framework
+djangorestframework
+
+# PostgreSQL database adapter
+psycopg2-binary
+
+# For handling CORS
+django-cors-headers
+
+# Additional packages you may find useful
+# dotenv for environment variable management
+python-dotenv
