@@ -13,3 +13,6 @@ django-cors-headers
 # Additional packages you may find useful
 # dotenv for environment variable management
 python-dotenv
+
+ # Used for filtering querysets in Django REST framework views
+django-filter
