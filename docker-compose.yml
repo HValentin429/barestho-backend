@@ -1,4 +1,3 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
@@ -13,10 +12,24 @@ services:
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000  
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "8000:8000" 
     depends_on:
       - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=barestho_backend.settings
+
+  daphne:
+    build: .
+    command: daphne -p 8080 barestho_backend.asgi:application 
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080" 
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=barestho_backend.settings

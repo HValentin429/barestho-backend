@@ -16,3 +16,8 @@ python-dotenv
 
  # Used for filtering querysets in Django REST framework views
 django-filter
+
+# Channels for WebSocket support
+channels>=4.0,<5.0
+
+daphne
