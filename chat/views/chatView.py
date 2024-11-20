@@ -42,6 +42,5 @@ class ChatViewSet(viewsets.ModelViewSet):
         except Chat.DoesNotExist:
             return Response({"detail": "Chat not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Serialize the chat object
         serializer = self.get_serializer(chat)
         return Response(serializer.data)

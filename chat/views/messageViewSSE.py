@@ -1,9 +1,9 @@
 import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
-import re
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +22,15 @@ class MessageStreamConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, chat_id, message, sender):
         from chat.models import Message
+        from notification.views.notificationView import create_and_send_notification
+        from chat.models.chat import Chat
+
         try:
             new_message = Message.objects.create(chat_id=chat_id, message=message, sender=sender)
+            
+            chat = Chat.objects.filter(id=chat_id).first()
+            create_and_send_notification("message", chat_id , chat.client if sender == 'user' else chat.restaurant)
+            
             return new_message
         except Exception as e:
             logger.error(f"Error saving message: {e}")
@@ -40,6 +47,7 @@ class MessageStreamConsumer(AsyncWebsocketConsumer):
             text_data_json = json.loads(text_data)
             message = text_data_json.get('message')
             sender = text_data_json.get('sender')
+            
 
             if message:
                 new_message = await self.save_message(self.chat_id, message, sender)
