@@ -3,6 +3,7 @@ from django.db import models
 from base.base import Base
 from chat.models.chat import Chat
 
+
 class Message(Base):
     STATUS_CHOICES = [
         ('sent', 'Sent'),

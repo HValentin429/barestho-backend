@@ -25,17 +25,26 @@ SECRET_KEY = 'django-insecure-^$_7mwp^p9ce*1-gmj2hj#39*k-l*@qfclvtq-zny&^o8o@&(l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50, 
 }
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
+
 # Application definition
 
 INSTALLED_APPS = [
+    'chat',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chat',
     'channels',
     'corsheaders'
 ]

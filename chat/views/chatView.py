@@ -9,12 +9,11 @@ from rest_framework import status
 
 def get_chats():
     latest_message = Message.objects.filter(chat=OuterRef('pk')).order_by('-created_at')
-    
-    chats = Chat.objects.all().annotate(
+    chats = Chat.objects.annotate(
         last_message_id=Subquery(latest_message.values('id')[:1]),
         latest_message_time=Subquery(latest_message.values('created_at')[:1]),
-    ).order_by('-latest_message_time') 
-
+    ).order_by('-latest_message_time')
+    
     return chats
 
 from rest_framework.response import Response
@@ -28,7 +27,7 @@ class ChatViewSet(viewsets.ModelViewSet):
         return get_chats()
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().filter(latest_message_time__isnull=False)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data) 
     

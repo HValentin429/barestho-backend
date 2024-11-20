@@ -2,34 +2,39 @@ version: '3.8'
 
 services:
   db:
-    image: postgres
+    image: postgres:13
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+    networks:
+      - backend_network
 
-  web:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - backend_network
+
+  backend:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000  
+    command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "barestho_backend.asgi:application"]
     volumes:
       - .:/app
     ports:
-      - "8000:8000" 
+      - "8000:8000"
     depends_on:
       - db
+      - redis
     environment:
-      - DJANGO_SETTINGS_MODULE=barestho_backend.settings
+      DJANGO_SETTINGS_MODULE: barestho_backend.settings
+    networks:
+      - backend_network
 
-  daphne:
-    build: .
-    command: daphne -p 8080 barestho_backend.asgi:application 
-    volumes:
-      - .:/app
-    ports:
-      - "8080:8080" 
-    depends_on:
-      - db
-    environment:
-      - DJANGO_SETTINGS_MODULE=barestho_backend.settings
+networks:
+  backend_network:
+    driver: bridge
